@@ -32,6 +32,11 @@ export default function ChatWindow() {
 
     setIsTyping(true);
     try {
+      // messages 상태를 GPT 형식으로 변환해서 같이 넘김
+      const history = messages.map((m) => ({
+        role: m.role === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
       const response = await sendMessageToAPI(userMessage.text);
       const botMessage = {
         role: "bot",

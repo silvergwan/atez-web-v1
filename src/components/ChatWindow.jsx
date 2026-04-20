@@ -103,36 +103,61 @@ export default function ChatWindow() {
       </div>
 
       {/* 인풋 영역 */}
-      <div className="h-13 flex items-center px-4 gap-2 shrink-0 border-t border-white/10">
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={handleInput}
-          onKeyDown={handleKeyDown}
-          placeholder="메시지를 입력하세요..."
-          rows={1}
-          className="flex-1 bg-transparent resize-none outline-none text-white text-[14px] placeholder-white/30 leading-relaxed"
-          style={{ maxHeight: "40px" }}
-        />
+      <div className="h-13.25 flex items-center gap-1.5 border-t border-t-white/10 px-2 shrink-0">
+        <div className="flex h-auto! flex-row items-end gap-1.5 flex-1">
+          <div className="flex flex-1 flex-row items-center overflow-hidden rounded-[20px] bg-[rgba(40,40,41,0.80)] pl-3">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={handleInput}
+              onKeyDown={handleKeyDown}
+              placeholder="메시지를 입력하세요..."
+              rows={1}
+              className="flex-1 bg-transparent resize-none outline-none text-white text-[14px] placeholder-white/30 leading-relaxed"
+              style={{ maxHeight: "40px" }}
+            />
 
-        {/* * 버튼 */}
-        <button
-          onClick={insertStar}
-          className="text-[#B3B3B3] text-[16px] font-medium w-8 h-8 flex items-center justify-center hover:text-white transition-colors"
-        >
-          *
-        </button>
+            {/* * 버튼 */}
+            <button
+              onClick={insertStar}
+              className="flex flex-row items-center justify-center p-1 transition-colors disabled:cursor-not-allowed disabled:text-white/50 my-1 size-7 shrink-0 self-end pr-2.5 outline-none hover:text-white"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 16 16"
+                class="size-4 text-gray-300 hover:text-white"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.382"
+                  d="M8.195 2v12M3 5l10.39 6M3 11l10.39-6"
+                ></path>
+              </svg>
+            </button>
+          </div>
 
-        {/* 전송 버튼 */}
-        <button
-          onClick={sendMessage}
-          disabled={isTyping}
-          className="w-8 h-8 rounded-full bg-[#6728FF] flex items-center justify-center disabled:opacity-40 transition-opacity"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </button>
+          {/* 전송 버튼 */}
+          <button
+            onClick={sendMessage}
+            disabled={isTyping}
+            className="group flex min-w-max flex-row items-center justify-center font-medium text-white transition-colors disabled:cursor-not-allowed disabled:text-white/20 bg-primary-400 hover:bg-primary-500 bg-[#6728FF] body14 my-0.5 size-8 shrink-0 rounded-full p-0 disabled:bg-gray-900"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="size-4 text-white"
+            >
+              <path
+                fill="currentColor"
+                d="M6 4.566c0-1.562 1.71-2.52 3.043-1.706l12.164 7.433c1.277.78 1.277 2.634 0 3.414L9.043 21.14C7.71 21.956 6 20.997 6 19.435z"
+              ></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </>
   );

@@ -127,7 +127,7 @@ export default function ChatWindow() {
         <button
           onClick={sendMessage}
           disabled={isTyping}
-          className="w-8 h-8 rounded-full bg-[##6728FF] flex items-center justify-center disabled:opacity-40 transition-opacity"
+          className="w-8 h-8 rounded-full bg-[#6728FF] flex items-center justify-center disabled:opacity-40 transition-opacity"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
             <path d="M8 5v14l11-7z" />

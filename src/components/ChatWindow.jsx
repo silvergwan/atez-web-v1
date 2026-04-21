@@ -37,7 +37,7 @@ export default function ChatWindow() {
         content: m.text,
       }));
 
-      const response = await sendMessageToAPI(userMessage.text, history);
+      const response = await sendMessageToAPI(userMessage.text);
       const botMessage = {
         role: "bot",
         text: response.reply,

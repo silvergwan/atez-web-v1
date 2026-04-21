@@ -1,176 +1,58 @@
-# Atez Web
+# Atez
 
-Atez Web은 캐릭터 기반 AI 채팅 서비스를 위한 프론트엔드 애플리케이션이다.
-Atez Web is a frontend application for a character-based AI chat service.
+> 캐릭터의 감정·기억·말투를 유지하는 AI 캐릭터 채팅 서비스
 
-Atez Server와 연동되어 캐릭터와의 대화를 실시간으로 제공한다.
-It connects to Atez Server to provide real-time character conversations.
+<img width="1470" height="835" alt="Image" src="https://github.com/user-attachments/assets/60996aba-8b29-4e6c-ab57-ce70f8cfff24" />
 
-단순한 메시지 송수신 UI가 아니라, 캐릭터의 말투와 연출을 살리는 데 초점을 둔다.
-Rather than a simple chat UI, it focuses on preserving character tone and presentation.
+## 만든 이유
 
----
+LLM이 대화가 길어질수록 앞 내용을 잊는다는 걸 알게 됐습니다.
+기억력을 어떻게 개선할 수 있을지 찾아보다가 RAG를 발견했고,
+직접 붙여보면서 어떻게 동작하는지 체험해보고 싶었습니다.
 
-## 개요 (Overview)
+캐릭터 채팅 서비스는 기억력이 중요한 도메인이라
+실험 대상으로 적합하다고 생각했습니다.
 
-Atez Web은 React와 Vite 기반으로 구축된 단일 페이지 애플리케이션이다.
-Atez Web is a single-page application built with React and Vite.
+프로젝트를 만들고 나서 Zeta에서도 유사한 개념인
+'로어북' 기능을 출시했습니다.
+같은 방향을 고민하고 있었다는 걸 확인한 순간이었습니다.
 
-유저는 텍스트 입력을 통해 캐릭터와 대화하며, 응답은 말풍선 형태로 출력된다.
-Users interact with the character through text input, with responses displayed as chat bubbles.
+## 서비스 플로우
 
-캐릭터의 행동 묘사(*...*)는 시각적으로 구분되어 표현된다.
-Character action descriptions (*...*) are visually distinguished in the UI.
+유저 메시지 입력
+→ 대화 히스토리 + RAG 검색으로 관련 기억 수집
+→ 감정·호감도 상태 계산
+→ 프롬프트 조립 후 GPT 호출
+→ 캐릭터 말투로 응답
 
----
+## 기술 스택
 
-## 주요 기능 (Core Features)
+| 영역     | 기술                          |
+| -------- | ----------------------------- |
+| Frontend | React, Vite, Tailwind CSS     |
+| Backend  | Node.js, Express              |
+| AI       | OpenAI GPT-4o-mini, Embedding |
+| DB       | Supabase (pgvector)           |
+| 배포     | Vercel (FE), Render (BE)      |
 
-### 채팅 인터페이스
+## 기억 구조
 
-Chat Interface
+히스토리와 RAG를 분리해서 단기·장기 기억을 따로 관리합니다.
 
-유저와 캐릭터의 메시지를 말풍선 형태로 구분해 표시한다.
-Messages from the user and the character are displayed as distinct chat bubbles.
+- **히스토리** — 현재 대화 흐름. 매 요청마다 GPT에 전달됩니다.
+- **RAG** — 유저 발화와 캐릭터 설정을 벡터로 저장. 맥락이 필요할 때 검색해서 프롬프트에 주입합니다.
 
-엔터 키로 메시지를 전송하고, Shift+Enter로 줄바꿈이 가능하다.
-Messages are sent with Enter, while Shift+Enter inserts a new line.
+감정 상태는 키워드 기반 즉시 판단과 GPT 감정 분석을 이중으로 씁니다.
+명확한 경우는 GPT를 호출하지 않아 비용을 줄였습니다.
 
----
+## 한계와 개선 방향
 
-### 자동 확장 입력창
+- 지금은 유저가 한 명(`user-1` 고정) — 인증 붙이면 멀티 유저 가능
+- RAG에 캐릭터 설정과 유저 발화가 섞여 있음 — `source` 기준으로 분리 검색하면 더 정확해짐
+- 호감도·감정이 규칙 기반 — 대화 맥락 전체를 보고 판단하는 방식으로 개선 가능
 
-Auto-Expanding Input
+## 어필
 
-입력 내용 길이에 따라 textarea 높이가 자동으로 조절된다.
-The textarea automatically expands based on input length.
-
-불필요한 스크롤 없이 자연스러운 입력 경험을 제공한다.
-This provides a smooth typing experience without unnecessary scrolling.
-
----
-
-### 타이핑 인디케이터
-
-Typing Indicator
-
-서버 응답을 기다리는 동안 캐릭터 타이핑 애니메이션을 표시한다.
-A typing animation is shown while waiting for the server response.
-
-이를 통해 캐릭터가 “응답 중”이라는 느낌을 준다.
-This gives the impression that the character is actively responding.
-
----
-
-### 캐릭터 행동 표현
-
-Character Action Rendering
-
-응답 텍스트 내 *행동 묘사*를 감지해 별도 스타일로 렌더링한다.
-Action descriptions wrapped in * are detected and rendered with a separate style.
-
-이는 캐릭터 연출과 몰입감을 강화한다.
-This enhances character expression and immersion.
-
----
-
-### API 연동 구조
-
-API Integration
-
-프론트엔드는 직접 OpenAI를 호출하지 않는다.
-The frontend does not call OpenAI directly.
-
-모든 요청은 Atez Server를 통해 처리된다.
-All requests are routed through Atez Server.
-
-환경 변수 기반으로 API URL과 토큰을 관리한다.
-API URL and client tokens are managed via environment variables.
-
----
-
-## 기술 스택 (Tech Stack)
-
-React를 사용해 UI를 구성했다.
-The UI is built with React.
-
-Vite를 사용해 빠른 개발 환경을 구성했다.
-Vite is used for fast development and builds.
-
-lucide-react를 사용해 아이콘을 처리한다.
-lucide-react is used for icon rendering.
-
----
-
-## 프로젝트 구조 (Project Structure)
-
-```
-src/
- ├─ components/
- │   ├─ ChatWindow.jsx      # 채팅 UI 및 입력 처리
- │   └─ MessageBubble.jsx   # 메시지 말풍선 컴포넌트
- ├─ pages/
- │   └─ ChatPage.jsx        # 채팅 페이지 레이아웃
- ├─ api/
- │   └─ index.js            # 서버 통신 로직
- ├─ assets/
- │   └─ kmj.png             # 캐릭터 이미지
- ├─ index.css               # 전역 스타일
- ├─ App.jsx                 # 앱 엔트리
- └─ main.jsx
-```
-
----
-
-## 환경 변수 (Environment Variables)
-
-`.env` 파일을 생성한다.
-Create a `.env` file.
-
-```
-VITE_API_URL=http://localhost:3000/chat
-VITE_CLIENT_TOKEN=your_client_token
-```
-
----
-
-## 실행 방법 (Running the Project)
-
-의존성을 설치한다.
-Install dependencies.
-
-```bash
-npm install
-npm run dev
-```
-
-개발 서버는 기본적으로 `http://localhost:5173` 에서 실행된다.
-The development server runs at `http://localhost:5173` by default.
-
----
-
-## 프로젝트 목적 (Purpose)
-
-이 프로젝트는 캐릭터 기반 AI 서비스의 사용자 경험을 실험한다.
-This project explores user experience for character-based AI services.
-
-백엔드에서 설계된 감정, 기억, 상황 개념을
-프론트엔드에서 자연스럽게 전달하는 것이 목표다.
-Its goal is to naturally convey backend-driven emotion, memory, and context to the user.
-
----
-
-## Notes
-
-이 레포지토리는 프론트엔드에만 집중한다.
-This repository focuses solely on the frontend.
-
-AI 로직과 상태 관리는 Atez Server에서 처리한다.
-AI logic and state management are handled by Atez Server.
-
----
-
-## Author
-
-최은관
-Eunkwan Choi
+_RAG가 궁금해서 직접 만들어봤습니다._
+_만들고 나서 Zeta에 로어북이 나왔고,_
+_스캐터랩이 푸는 문제를 저도 같이 고민하고 싶습니다._
